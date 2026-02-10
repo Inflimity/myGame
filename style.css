@@ -58,6 +58,40 @@ canvas {
     z-index: 10;
 }
 
+#controls {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.nav-btn {
+    width: 70px;
+    height: 70px;
+    background: rgba(0, 242, 255, 0.1) !important;
+    border: 2px solid var(--neon-blue) !important;
+    border-radius: 50% !important;
+    font-size: 1.5rem !important;
+    color: var(--neon-blue) !important;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 !important;
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
+
+.nav-btn:active {
+    background: var(--neon-blue) !important;
+    color: black !important;
+    transform: scale(0.95);
+}
+
 .label {
     display: block;
     font-size: 0.7rem;

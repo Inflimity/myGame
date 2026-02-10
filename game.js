@@ -10,13 +10,15 @@ const gameOverScreen = document.getElementById('game-over-screen');
 // Game constants
 const GRAVITY = 0.35;
 const JUMP_STRENGTH = -12;
-const PLATFORM_COUNT = 9;
-const PLATFORM_WIDTH = 100;
+const PLATFORM_COUNT = 12; // More platforms
+const PLATFORM_WIDTH = 120; // Even wider
 const PLATFORM_HEIGHT = 15;
-const PLAYER_SPEED = 10;
-const LERP_FACTOR = 0.2; // For smooth movement
+const PLAYER_SPEED = 12; // A bit faster horizontal
+const LERP_FACTOR = 0.15;
 
-let targetVx = 0; // Target velocity for smoothing
+let targetVx = 0;
+let jumpCount = 0; // For double jump
+const MAX_JUMPS = 2;
 let gameState = 'START';
 let score = 0;
 let highestAltitude = 0;
@@ -160,6 +162,7 @@ function update() {
                 player.y + player.height < p.y + p.height + player.vy) {
 
                 player.vy = JUMP_STRENGTH;
+                jumpCount = 0; // Reset jump count when hitting platform
                 // Add jump feedback?
             }
         });
@@ -236,11 +239,26 @@ window.addEventListener('resize', resize);
 startBtn.addEventListener('click', startGame);
 restartBtn.addEventListener('click', startGame);
 
-// Controls for both Mobile and Desktop
-canvas.addEventListener('mousemove', handleInput);
-canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    handleInput(e);
+// Button Controls
+const leftBtn = document.getElementById('left-btn');
+const rightBtn = document.getElementById('right-btn');
+
+leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); targetVx = -PLAYER_SPEED; });
+leftBtn.addEventListener('touchend', () => { targetVx = 0; });
+leftBtn.addEventListener('mousedown', () => { targetVx = -PLAYER_SPEED; });
+leftBtn.addEventListener('mouseup', () => { targetVx = 0; });
+
+rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); targetVx = PLAYER_SPEED; });
+rightBtn.addEventListener('touchend', () => { targetVx = 0; });
+rightBtn.addEventListener('mousedown', () => { targetVx = PLAYER_SPEED; });
+rightBtn.addEventListener('mouseup', () => { targetVx = 0; });
+
+// Jump on tap (for double jump)
+canvas.addEventListener('touchstart', (e) => {
+    if (gameState === 'PLAYING' && jumpCount < MAX_JUMPS) {
+        player.vy = JUMP_STRENGTH;
+        jumpCount++;
+    }
 }, { passive: false });
 
 window.onload = resize;
