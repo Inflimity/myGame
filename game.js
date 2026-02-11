@@ -8,12 +8,15 @@ const startScreen = document.getElementById('start-screen');
 const gameOverScreen = document.getElementById('game-over-screen');
 
 // Game constants
-const GRAVITY = 0.4;
+const GRAVITY = 0.35;
 const JUMP_STRENGTH = -12;
-const PLATFORM_COUNT = 8;
-const PLATFORM_WIDTH = 70;
-const PLATFORM_HEIGHT = 12;
+const PLATFORM_COUNT = 9;
+const PLATFORM_WIDTH = 100;
+const PLATFORM_HEIGHT = 15;
+const PLAYER_SPEED = 10;
+const LERP_FACTOR = 0.2; // For smooth movement
 
+let targetVx = 0; // Target velocity for smoothing
 let gameState = 'START';
 let score = 0;
 let highestAltitude = 0;
@@ -29,16 +32,16 @@ const player = {
     vx: 0,
     vy: 0,
     color: '#ff00ff',
-    
+
     draw() {
         ctx.save();
         ctx.shadowBlur = 15;
         ctx.shadowColor = this.color;
-        
+
         // Draw main body
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
-        
+
         // Draw highlight
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(this.x + 5, this.y + 5, 10, 5);
@@ -48,6 +51,9 @@ const player = {
     update() {
         this.vy += GRAVITY;
         this.y += this.vy;
+
+        // Smoothly interpolate current velocity to target velocity
+        this.vx += (targetVx - this.vx) * LERP_FACTOR;
         this.x += this.vx;
 
         // Screen wrap
@@ -55,15 +61,15 @@ const player = {
         if (this.x > canvas.width) this.x = -this.width;
 
         // Vertical boundaries & Camera scroll
-        if (this.y < canvas.height / 2) {
-            const diff = canvas.height / 2 - this.y;
-            this.y = canvas.height / 2;
-            
+        if (this.y < canvas.height / 2.5) {
+            const diff = canvas.height / 2.5 - this.y;
+            this.y = canvas.height / 2.5;
+
             // Move platforms down instead of player up
             platforms.forEach(p => p.y += diff);
             // Move particles down
             particles.forEach(p => p.y += diff);
-            
+
             score += Math.round(diff / 10);
             scoreElement.innerText = `${score}m`;
         }
@@ -88,12 +94,12 @@ class Platform {
         ctx.save();
         ctx.shadowBlur = 10;
         ctx.shadowColor = this.color;
-        
+
         // Platform gradient
         let gradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y);
         gradient.addColorStop(0, '#00f2ff');
         gradient.addColorStop(1, '#0099ff');
-        
+
         ctx.fillStyle = gradient;
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.restore();
@@ -105,7 +111,7 @@ function initGame() {
     resize();
     score = 0;
     scoreElement.innerText = '0m';
-    
+
     player.x = canvas.width / 2 - 15;
     player.y = canvas.height - 150;
     player.vy = JUMP_STRENGTH;
@@ -114,7 +120,7 @@ function initGame() {
     platforms = [];
     // Starting platform
     platforms.push(new Platform(player.x - 20, player.y + 100));
-    
+
     // Generate initial set
     for (let i = 1; i < PLATFORM_COUNT; i++) {
         generatePlatform(i);
@@ -139,12 +145,12 @@ function update() {
     if (gameState !== 'PLAYING') return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Background Grid effect
     drawGrid();
 
     player.update();
-    
+
     // Collision detection (falling only)
     if (player.vy > 0) {
         platforms.forEach(p => {
@@ -152,7 +158,7 @@ function update() {
                 player.x + player.width > p.x &&
                 player.y + player.height > p.y &&
                 player.y + player.height < p.y + p.height + player.vy) {
-                
+
                 player.vy = JUMP_STRENGTH;
                 // Add jump feedback?
             }
@@ -176,7 +182,7 @@ function drawGrid() {
     ctx.strokeStyle = 'rgba(0, 242, 255, 0.05)';
     ctx.lineWidth = 1;
     const gridSize = 40;
-    
+
     // Simple static grid that repeats
     for (let x = 0; x <= canvas.width; x += gridSize) {
         ctx.beginPath();
@@ -195,7 +201,7 @@ function drawGrid() {
 // Controller Logic
 function handleInput(e) {
     if (gameState !== 'PLAYING') return;
-    
+
     let clientX;
     if (e.type.includes('touch')) {
         clientX = e.touches[0].clientX;
@@ -204,11 +210,10 @@ function handleInput(e) {
     }
 
     const rect = canvas.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const moveX = (clientX - centerX) / (rect.width / 2);
-    
-    // Sensitivity
-    player.vx = moveX * 8;
+    const relativeX = (clientX - rect.left) / rect.width;
+
+    // Map position [0, 1] to a target velocity target
+    targetVx = (relativeX - 0.5) * 2 * PLAYER_SPEED;
 }
 
 // State Management

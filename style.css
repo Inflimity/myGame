@@ -29,10 +29,8 @@ body {
 #game-container {
     position: relative;
     width: 100%;
-    max-width: 500px; /* Standard mobile aspect ratio width */
     height: 100%;
     background: radial-gradient(circle at center, #1a0b2e 0%, #050505 100%);
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     overflow: hidden;
 }
 
