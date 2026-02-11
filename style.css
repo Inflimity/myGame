@@ -60,7 +60,8 @@ canvas {
 
 #controls {
     position: absolute;
-    bottom: 40px;
+    bottom: 120px;
+    /* Moved up for better thumb placement */
     left: 0;
     width: 100%;
     display: flex;
