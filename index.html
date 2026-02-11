@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cyber-Runner | Neon Infinite Jumper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui-layer">
+            <div id="score-container">
+                <span class="label">ALTITUDE</span>
+                <span id="score">0m</span>
+            </div>
+            
+            <div id="start-screen" class="overlay">
+                <h1 class="glitch-text" data-text="CYBER RUNNER">CYBER RUNNER</h1>
+                <p>READY TO ASCEND?</p>
+                <button id="start-btn">BOOT UP</button>
+            </div>
+
+            <div id="game-over-screen" class="overlay hidden">
+                <h2 class="danger-text">SYSTEM FAILURE</h2>
+                <div class="final-stats">
+                    <p>FINAL ALTITUDE: <span id="final-score">0</span>m</p>
+                </div>
+                <button id="restart-btn">REBOOT</button>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
