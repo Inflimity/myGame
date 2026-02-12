@@ -8,13 +8,13 @@ const startScreen = document.getElementById('start-screen');
 const gameOverScreen = document.getElementById('game-over-screen');
 
 // Game constants
-const GRAVITY = 0.35;
-const JUMP_STRENGTH = -12;
-const PLATFORM_COUNT = 12; // More platforms
-const PLATFORM_WIDTH = 120; // Even wider
+const GRAVITY = 0.42;
+const JUMP_STRENGTH = -12.5;
+const PLATFORM_COUNT = 9; // Fewer platforms
+const PLATFORM_WIDTH = 80; // Narrower platforms
 const PLATFORM_HEIGHT = 15;
-const PLAYER_SPEED = 12; // A bit faster horizontal
-const LERP_FACTOR = 0.15;
+const PLAYER_SPEED = 14;
+const LERP_FACTOR = 0.2;
 
 let targetVx = 0;
 let jumpCount = 0; // For double jump
